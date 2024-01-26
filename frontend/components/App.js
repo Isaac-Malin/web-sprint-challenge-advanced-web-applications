@@ -13,11 +13,9 @@ const loginUrl = 'http://localhost:9000/api/login'
 export default function App() {
   // ✨ MVP can be achieved with these states
 
-  const { id } = useParams()
-
   const [message, setMessage] = useState('')
   const [articles, setArticles] = useState([])
-  const [currentArticleId, setCurrentArticleId] = useState(id)
+  const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
 
   // ✨ Research `useNavigate` in React Router v.6
@@ -90,7 +88,7 @@ export default function App() {
       .catch(err => {
         redirectToLogin()
         setSpinnerOn()
-        console.log(err);
+        // console.log(err);
       })
   }
 
@@ -110,7 +108,6 @@ export default function App() {
           ...articles,
           articles: res.data
         }])
-
       })
       .catch(err => {
         console.log(err);
@@ -120,6 +117,18 @@ export default function App() {
   const updateArticle = ({ article_id, article }) => {
     // ✨ implement
     // You got this!
+    const token = localStorage.getItem('token')
+    axios.put(`http://localhost:9000/api/articles/${article_id}`, article, {
+      headers: {
+        authorization: token
+      }
+    })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 
   const deleteArticle = article_id => {
@@ -142,7 +151,7 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId}/>
+              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} currentArticle={articles}/>
               <Articles articles={articles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} />
             </>
           } />

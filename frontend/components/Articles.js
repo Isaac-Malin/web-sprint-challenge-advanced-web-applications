@@ -6,18 +6,27 @@ import LoginForm from './LoginForm'
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
 
-  const { articles, getArticles, deleteArticle, setCurrentArticleId } = props
+  const { articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId } = props
+
+  // console.log(currentArticleId);
 
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
   if(!localStorage.getItem('token')) {
-    <Navigate />
+    <Navigate to={LoginForm}/>
   }
 
   useEffect(() => {
     // ✨ grab the articles here, on first render only
     getArticles()
   }, [])
+
+  const isDisabled = () => {
+    if (currentArticleId) {
+      return true
+    }
+    return false
+  }
 
   return (
     // ✨ fix the JSX: replace `Function.prototype` with actual functions
@@ -30,14 +39,14 @@ export default function Articles(props) {
           : articles.map(art => {
             return (
               <div className="article" key={art.article_id}>
-                <div>
+                <div key={art.article_id}>
                   <h3>{art.title}</h3>
                   <p>{art.text}</p>
                   <p>Topic: {art.topic}</p>
                 </div>
                 <div>
-                  <button disabled={false} onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
-                  <button disabled={false} onClick={deleteArticle()}>Delete</button>
+                  <button disabled={isDisabled()} onClick={() => setCurrentArticleId(art.article_id)}>Edit</button>
+                  <button disabled={isDisabled()} onClick={() => deleteArticle(art.article_id)}>Delete</button>
                 </div>
               </div>
             )

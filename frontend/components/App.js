@@ -18,6 +18,11 @@ export default function App() {
   const [currentArticleId, setCurrentArticleId] = useState()
   const [spinnerOn, setSpinnerOn] = useState(false)
 
+  const currentArticle = articles.find(article => article.article_id === currentArticleId)
+
+  // console.log(articles[0].text); // Ensure 'article_id' is spelled correctly
+
+
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
   const redirectToLogin = () => {
@@ -54,7 +59,7 @@ export default function App() {
         localStorage.setItem('token', res.data.token)
         setMessage(res.data.message)
         redirectToArticles()
-        setSpinnerOn()
+        setSpinnerOn(false)
         // console.log(res);
       })
       .catch(err => {
@@ -82,13 +87,13 @@ export default function App() {
       .then(res => {
         setArticles(res.data.articles)
         setMessage(res.data.message)
-        setSpinnerOn()
+        setSpinnerOn(false)
         // console.log(res);
       })
       .catch(err => {
         redirectToLogin()
-        setSpinnerOn()
-        // console.log(err);
+        setSpinnerOn(false)
+        console.log(err);
       })
   }
 
@@ -104,10 +109,7 @@ export default function App() {
       }
     })
       .then(res => {
-        setArticles([{
-          ...articles,
-          articles: res.data
-        }])
+        setArticles(prevArticles => [...prevArticles, res.data]);
       })
       .catch(err => {
         console.log(err);
@@ -124,6 +126,10 @@ export default function App() {
       }
     })
       .then(res => {
+        setArticles([{
+          ...articles,
+          articles: res.data.article
+        }])
         console.log(res);
       })
       .catch(err => {
@@ -133,6 +139,18 @@ export default function App() {
 
   const deleteArticle = article_id => {
     // ✨ implement
+    const token = localStorage.getItem('token')
+    axios.delete(`${articlesUrl}/${article_id}`, {
+      headers: {
+        authorization: token
+      }
+    })
+      .then(res => {
+        setArticles(prevArticles => prevArticles.filter(article => article.article_id !== article_id));
+      })
+      .catch(err => {
+        console.log(err);
+      })  
   }
 
   return (
@@ -151,8 +169,8 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} currentArticle={articles}/>
-              <Articles articles={articles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} />
+              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} currentArticle={currentArticle}/>
+              <Articles articles={articles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} currentArticleId={currentArticleId} />
             </>
           } />
         </Routes>

@@ -25,8 +25,8 @@ export default function App() {
   const [spinnerOn, setSpinnerOn] = useState(false);
 
   const currentArticle = currentArticleId
-  ? articles.find((article) => article.article_id === currentArticleId)
-  : undefined;
+    ? articles.find((article) => article.article_id === currentArticleId)
+    : undefined;
 
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate();
@@ -105,8 +105,8 @@ export default function App() {
   };
 
   const postArticle = (article) => {
-    setMessage("")
-    setSpinnerOn(true)
+    setMessage("");
+    setSpinnerOn(true);
     const token = localStorage.getItem("token");
     axios
       .post(articlesUrl, article, {
@@ -117,45 +117,54 @@ export default function App() {
       .then((res) => {
         console.log(res);
         setArticles((prevArticles) => [...prevArticles, res.data.article]);
-        setMessage(res.data.message)
-        setSpinnerOn(false)
+        setMessage(res.data.message);
+        setSpinnerOn(false);
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  
-  
-  
 
   const updateArticle = ({ article_id, article }) => {
-    setMessage("")
-    setSpinnerOn(true)
-    const token = localStorage.getItem('token')
-    axios.put(`${articlesUrl}/${article_id}`, article, {
-      headers: {
-        authorization: token
-      }
-    })
-    .then(res => {
-      console.log(res.data);
-      setArticles(prevArticles => prevArticles.map(a => a.article_id === res.data.article_id ? res.data.article : a));
-      setMessage(res.data.message)
-      // do something with the response, such as updating your state
-      getArticles()
-      setSpinnerOn(false)
-    })
-    .catch(err => {
-      console.error(err);
-      // handle the error
-    });
+    setMessage("");
+    setSpinnerOn(true);
+    const token = localStorage.getItem("token");
+
+    axios
+      .put(`${articlesUrl}/${article_id}`, article, {
+        headers: {
+          authorization: token,
+        },
+      })
+      .then((res) => {
+        // console.log("Update Article Response:", res);
+
+        setArticles((prevArticles) => {
+          return prevArticles.map((art) => {
+            console.log(art.article_id, res.data.article.article_id);
+            if (art.article_id === res.data.article.article_id) {
+              console.log("Updating Article:", res.data.article);
+              return res.data.article;
+            } else {
+              return art;
+            }
+          });
+        });
+
+        setMessage(res.data.message);
+        setSpinnerOn(false);
+      })
+      .catch((err) => {
+        console.error("Error updating article:", err);
+        // handle the error
+        setSpinnerOn(false);
+      });
   };
-  
 
   const deleteArticle = (article_id) => {
     // ✨ implement
-    setMessage("")
-    setSpinnerOn(true)
+    setMessage("");
+    setSpinnerOn(true);
     const token = localStorage.getItem("token");
     axios
       .delete(`${articlesUrl}/${article_id}`, {
@@ -167,9 +176,9 @@ export default function App() {
         setArticles((prevArticles) =>
           prevArticles.filter((article) => article.article_id !== article_id)
         );
-        setMessage(res.data.message)
+        setMessage(res.data.message);
         console.log(res);
-        setSpinnerOn(false)
+        setSpinnerOn(false);
       })
       .catch((err) => {
         console.log(err);

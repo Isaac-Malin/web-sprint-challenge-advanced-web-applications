@@ -9,7 +9,7 @@ export default function ArticleForm(props) {
   const { postArticle, updateArticle, setCurrentArticleId, currentArticle } =
     props;
 
-  console.log(values);
+  // console.log(values);
 
   useEffect(() => {
     if (currentArticle) {

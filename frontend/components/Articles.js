@@ -1,19 +1,18 @@
 import React, { useEffect } from 'react'
 import { Navigate } from 'react-router-dom'
 import PT from 'prop-types'
-import LoginForm from './LoginForm'
 
 export default function Articles(props) {
   // ✨ where are my props? Destructure them here
 
   const { articles, getArticles, deleteArticle, setCurrentArticleId, currentArticleId } = props
 
-  // console.log(currentArticleId);
+  console.log(articles);
 
   // ✨ implement conditional logic: if no token exists
   // we should render a Navigate to login screen (React Router v.6)
   if(!localStorage.getItem('token')) {
-    <Navigate to={LoginForm}/>
+    return <Navigate to='/login'/>
   }
 
   useEffect(() => {

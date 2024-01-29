@@ -129,31 +129,26 @@ export default function App() {
   
 
   const updateArticle = ({ article_id, article }) => {
+    setMessage("")
     setSpinnerOn(true)
-    const token = localStorage.getItem("token");
-    axios
-      .put(`http://localhost:9000/api/articles/${article_id}`, article, {
-        headers: {
-          authorization: token,
-        },
-      })
-      .then(res => {
-        setArticles(prevArticles => {
-          return prevArticles.map(art => {
-            if (art.article_id === res.data.article_id) {
-              return {...art, ...res.data.article};
-            } else {
-              return art;
-            }
-          });
-        });
-        setMessage(res.data.message)
-        setSpinnerOn(false)
-        console.log(res.data.article);
-      })
-      .catch(err => {
-        console.error("Error updating article:", err);
-      });
+    const token = localStorage.getItem('token')
+    axios.put(`${articlesUrl}/${article_id}`, article, {
+      headers: {
+        authorization: token
+      }
+    })
+    .then(res => {
+      console.log(res.data);
+      setArticles(prevArticles => prevArticles.map(a => a.article_id === res.data.article_id ? res.data.article : a));
+      setMessage(res.data.message)
+      // do something with the response, such as updating your state
+      getArticles()
+      setSpinnerOn(false)
+    })
+    .catch(err => {
+      console.error(err);
+      // handle the error
+    });
   };
   
 

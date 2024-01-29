@@ -126,6 +126,7 @@ export default function App() {
   
 
   const updateArticle = ({ article_id, article }) => {
+    setSpinnerOn(true)
     const token = localStorage.getItem("token");
     axios
       .put(`http://localhost:9000/api/articles/${article_id}`, article, {
@@ -137,14 +138,15 @@ export default function App() {
         setArticles(prevArticles => {
           return prevArticles.map(art => {
             if (art.article_id === res.data.article_id) {
-              return res.data.article;
+              return {...art, ...res.data.article};
             } else {
               return art;
             }
           });
         });
         setMessage(res.data.message)
-        console.log("Article updated successfully:", res.data.message);
+        setSpinnerOn(false)
+        console.log(res.data.article);
       })
       .catch(err => {
         console.error("Error updating article:", err);
@@ -154,6 +156,8 @@ export default function App() {
 
   const deleteArticle = (article_id) => {
     // ✨ implement
+    setMessage("")
+    setSpinnerOn(true)
     const token = localStorage.getItem("token");
     axios
       .delete(`${articlesUrl}/${article_id}`, {
@@ -167,6 +171,7 @@ export default function App() {
         );
         setMessage(res.data.message)
         console.log(res);
+        setSpinnerOn(false)
       })
       .catch((err) => {
         console.log(err);

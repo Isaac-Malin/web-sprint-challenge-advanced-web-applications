@@ -37,10 +37,11 @@ export default function ArticleForm(props) {
         article_id: currentArticle.article_id,
         article: { title: values.title, text: values.text, topic: values.topic },
       });
+      setValues(initialFormValues)
     } else {
       postArticle({ title: values.title, text: values.text, topic: values.topic });
     }
-    
+    setCurrentArticleId(undefined)
     // Ensure there's no state reset here.
     // setValues(initialFormValues);
   };

@@ -40,6 +40,7 @@ export default function ArticleForm(props) {
       setValues(initialFormValues)
     } else {
       postArticle({ title: values.title, text: values.text, topic: values.topic });
+      setValues(initialFormValues)
     }
     setCurrentArticleId(undefined)
     // Ensure there's no state reset here.

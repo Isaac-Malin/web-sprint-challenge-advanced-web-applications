@@ -105,6 +105,8 @@ export default function App() {
   };
 
   const postArticle = (article) => {
+    setMessage("")
+    setSpinnerOn(true)
     const token = localStorage.getItem("token");
     axios
       .post(articlesUrl, article, {
@@ -116,6 +118,7 @@ export default function App() {
         console.log(res);
         setArticles((prevArticles) => [...prevArticles, res.data.article]);
         setMessage(res.data.message)
+        setSpinnerOn(false)
       })
       .catch((err) => {
         console.log(err);
